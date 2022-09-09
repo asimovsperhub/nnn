@@ -50,9 +50,18 @@ func defaultConf() *RConfig {
 		IConf: &IpfsConf{
 			HashPath: "./hash.json",
 		},
+		Mysql: &DatabaseConf{
+			Host:   "172.81.40.90:3306",
+			Driver: "mysql",
+			DbName: "white",
+			User:   "root",
+			Passwd: "Asimov@0518",
+		},
 	}
 }
-
+func (rc *RConfig) GetMysqlDb() *DatabaseConf {
+	return rc.Mysql
+}
 func (rc *RConfig) GetIpfsHash() string {
 	return rc.IConf.HashPath
 }
@@ -160,7 +169,13 @@ func CmdSockFile() string {
 type WebSeverConf struct {
 	ListenServer string `json:"listen_server"`
 }
-
+type DatabaseConf struct {
+	Host   string `json:"host"`
+	Driver string `json:"driver"`
+	DbName string `json:"db_name"`
+	User   string `json:"user"`
+	Passwd string `json:"passwd"`
+}
 type ContractConf struct {
 	ChainID       int64
 	ChainName     string
@@ -183,6 +198,7 @@ type RConfig struct {
 	Mconf *ContractConf `json:"m_conf"`
 	SConf *SysConf      `json:"s_conf"`
 	IConf *IpfsConf     `json:"i_conf"`
+	Mysql *DatabaseConf `json:"mysql"`
 }
 
 func (nc *RConfig) load() error {

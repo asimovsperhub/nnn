@@ -6,6 +6,7 @@ import (
 	"github.com/dnsdao/nft.pass/config"
 	"github.com/dnsdao/nft.pass/contract/dnscontract"
 	"github.com/dnsdao/nft.pass/database/ldb"
+	"github.com/dnsdao/nft.pass/database/mysqldb"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -14,6 +15,10 @@ import (
 )
 
 const svg = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generator: Adobe Illustrator 26.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->\n<svg version=\"1.1\" id=\"图层_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 1200 1200\" style=\"enable-background:new 0 0 1200 1200;\" xml:space=\"preserve\">\n<style type=\"text/css\">\n\t.st0{fill:#FFFFFF;}\n\t.st1{font-family:'PingFang-SC-Heavy';}\n\t.st2{font-size:81.3892px;}\n</style>\n<image style=\"overflow:visible;\" width=\"1200\" height=\"1200\" xlink:href=\"%s\" >\n</image>\n<text transform=\"matrix(1 0 0 1 58.6783 129.0048)\" class=\"st0 st1 st2\">%s</text>\n</svg>"
+
+type MysqlRes struct {
+	Addr string `json:"addr"`
+}
 
 func NewColdBootClient(confT string) (*dnscontract.ColdBoot, *ethclient.Client, error) {
 	cli, err := ethclient.Dial(config.GetRConf().GetRPCEndPoint(confT))
@@ -65,6 +70,26 @@ func BatchNewColdBootClient(confT string, start, end uint64) {
 		if err1 != nil {
 			log.Println("BatchNewColdBootClient ", "save to db error")
 			continue
+		}
+		var c MysqlRes
+		dbm := mysqldb.GetMdb()
+		merr := dbm.Mysql.QueryRow(fmt.Sprintf("SELECT addr FROM Address WHERE addr='%s' LIMIT 1;", ev.User.String())).Scan(&c.Addr)
+		if merr != nil {
+			if strings.Contains(merr.Error(), "no rows in result set") {
+				// Do what you need here.
+				white, _ := db.GetNotWhite()
+				if white != nil {
+					white.Name[ev.User.String()] = ev.CardId.String()
+				} else {
+					white = &ldb.NotWhite{
+						Name: map[string]string{ev.User.String(): ev.CardId.String()},
+					}
+				}
+
+				db.SaveNotWhite(white)
+			} else {
+				log.Println("Mysql err", merr)
+			}
 		}
 		label := "NO."
 		switch len(cardId) {

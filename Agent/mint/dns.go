@@ -51,14 +51,14 @@ func currentBlk(confT string) (uint64, error) {
 func loopForNewName() {
 	var err error
 	db := ldb.GetLdb()
-	cdbblk := db.GetLatestBlkNum("CBlkNum")
-	CcurrentBlkNumber, err = currentBlk("c_conf")
-	if err != nil {
-		return
-	}
-	BatchNewColdBootClient("c_conf", cdbblk, CcurrentBlkNumber)
-	//defer db.CloseLdb()
-	db.SaveLatestBlkNum("CBlkNum", CcurrentBlkNumber)
+	//cdbblk := db.GetLatestBlkNum("CBlkNum")
+	//CcurrentBlkNumber, err = currentBlk("c_conf")
+	//if err != nil {
+	//	return
+	//}
+	//BatchNewColdBootClient("c_conf", cdbblk, CcurrentBlkNumber)
+	////defer db.CloseLdb()
+	//db.SaveLatestBlkNum("CBlkNum", CcurrentBlkNumber)
 
 	mdbblk := db.GetLatestBlkNum("MBlkNum")
 	McurrentBlkNumber, err = currentBlk("m_conf")

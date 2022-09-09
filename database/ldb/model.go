@@ -7,3 +7,14 @@ type S3 struct {
 type Ipfs struct {
 	Upload map[string]string `json:"upload"`
 }
+
+type Card struct {
+	Name map[string]string `json:"name"`
+}
+type NotWhite struct {
+	Name map[string]string `json:"name"`
+}
+
+type TokenIdName struct {
+	TokenName map[string]string `json:"token_name"`
+}

@@ -77,6 +77,13 @@ func (db *Ldb) GetKey(key string) (string, error) {
 		return string(v), nil
 	}
 }
+func (db *Ldb) SaveKey(key string, val string) error {
+	if err := db.db.Put([]byte(key), []byte(val), &opt.WriteOptions{Sync: true}); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func (db *Ldb) SaveMintCard(CardId string, val string) error {
 	if err := db.db.Put([]byte(CardId), []byte(val), &opt.WriteOptions{Sync: true}); err != nil {
@@ -175,6 +182,76 @@ func (db *Ldb) GetIpfsm() (*Ipfs, error) {
 func (db *Ldb) SaveIpfsm(ct *Ipfs) error {
 	v, _ := json.Marshal(ct)
 	k := fmt.Sprintf("mipfs")
+	if err := db.db.Put([]byte(k), v, &opt.WriteOptions{Sync: true}); err != nil {
+		return err
+	}
+	return nil
+}
+func (db *Ldb) GetCard() (*Card, error) {
+	var ret *Card
+	k := fmt.Sprintf("card")
+	if v, err := db.db.Get([]byte(k), nil); err != nil {
+		return nil, err
+	} else {
+		err = json.Unmarshal(v, &ret)
+		if err != nil {
+			return nil, err
+		}
+
+		return ret, nil
+	}
+}
+
+func (db *Ldb) SaveCard(ct *Card) error {
+	v, _ := json.Marshal(ct)
+	k := fmt.Sprintf("card")
+	if err := db.db.Put([]byte(k), v, &opt.WriteOptions{Sync: true}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *Ldb) GetNotWhite() (*NotWhite, error) {
+	var ret *NotWhite
+	k := fmt.Sprintf("notwhite")
+	if v, err := db.db.Get([]byte(k), nil); err != nil {
+		return nil, err
+	} else {
+		err = json.Unmarshal(v, &ret)
+		if err != nil {
+			return nil, err
+		}
+
+		return ret, nil
+	}
+}
+
+func (db *Ldb) SaveNotWhite(ct *NotWhite) error {
+	v, _ := json.Marshal(ct)
+	k := fmt.Sprintf("notwhite")
+	if err := db.db.Put([]byte(k), v, &opt.WriteOptions{Sync: true}); err != nil {
+		return err
+	}
+	return nil
+}
+func (db *Ldb) GetTokenName() (*TokenIdName, error) {
+	var ret *TokenIdName
+	k := fmt.Sprintf("TokenName")
+	if v, err := db.db.Get([]byte(k), nil); err != nil {
+		return nil, err
+	} else {
+		err = json.Unmarshal(v, &ret)
+		if err != nil {
+			return nil, err
+		}
+
+		return ret, nil
+	}
+}
+
+func (db *Ldb) SaveTokenName(ct *TokenIdName) error {
+	v, _ := json.Marshal(ct)
+	k := fmt.Sprintf("TokenName")
 	if err := db.db.Put([]byte(k), v, &opt.WriteOptions{Sync: true}); err != nil {
 		return err
 	}

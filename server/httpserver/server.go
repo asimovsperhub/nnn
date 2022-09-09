@@ -13,8 +13,10 @@ import (
 )
 
 const (
-	CTokenId = "/api/nft/c/{token_id}"
-	MTokenId = "/api/nft/m/{token_id}"
+	CTokenId     = "/api/nft/c/{token_id}"
+	MTokenId     = "/api/nft/m/{token_id}"
+	GetWhiteCard = "/api/getwhitecard"
+	GetTokenName = "/api/gettokenname"
 )
 
 type WebProxyServer struct {
@@ -68,8 +70,10 @@ func (ws *WebProxyServer) init() *WebProxyServer {
 	wapi := api.NewApi()
 	//rh.HandleFunc(TokenId, wapi.TokenId)
 	r := mux.NewRouter()
-	r.HandleFunc(CTokenId, wapi.CTokenId)
+	// r.HandleFunc(CTokenId, wapi.CTokenId)
 	r.HandleFunc(MTokenId, wapi.MTokenId)
+	r.HandleFunc(GetWhiteCard, wapi.GetWhiteCard)
+	r.HandleFunc(GetTokenName, wapi.GetTokenName)
 	server := &http.Server{
 		Handler: r,
 	}
